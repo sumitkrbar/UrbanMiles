@@ -41,17 +41,13 @@ const Hero = () => {
         transition={{ duration: 0.8 }}
         className="relative w-full h-[90vh] flex flex-col items-center text-center overflow-hidden"
       >
-        {/* Background Image */}
         <img
-          src={assets.herobackground} // replace this with the chosen image from vecteezy/freepik
+          src={assets.heroBackground} 
           alt="Hero Background"
           className="absolute  inset:0 w-full h-full object-cover z-0"
         />
 
-        {/* Black Overlay */}
         
-
-        {/* Content */}
         <div className="relative z-20 px-4 py-5 w-full max-w-screen-xl  mt-0">
           <motion.h1
             initial={{ y: 50, opacity: 0 }}

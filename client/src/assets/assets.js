@@ -46,7 +46,7 @@ import ban2 from "./ban2.png";
 import ban3 from "./ban3.png";
 import ban4 from "./ban4.png";
 import ban5 from "./ban5.png";
-import herobackground from "./herobackground.jpg";
+import heroBackground from "./heroBackground.jpg";
 import base from "./base.jpg";
 export const cityList = ['Delhi', 'Mumbai', 'Bangalore', 'Hydrabad','Gujrat','Ranchi']
 
@@ -99,7 +99,7 @@ export const assets = {
     ban3,
     ban4,
     ban5,
-    herobackground,
+    heroBackground,
     base
 }
 
