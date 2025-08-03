@@ -25,7 +25,7 @@ const CarDetails = () => {
       if(data.success){
         toast.success(data.message)
         navigate('/my-bookings')
-      } else{
+      } else{        
         toast.error(data.message)
       }
       

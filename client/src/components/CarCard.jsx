@@ -9,11 +9,11 @@ const CarCard = ({car}) => {
   return (
     <div onClick={()=> {navigate(`/car-details/${car._id}`); scrollTo(0,0)}}
      className='group rounded-xl overflow-hidden shadow-lg hover:-translate-y-1
-    transition-all duration-500 cursor-pointer'>
+    transition-all duration-500 cursor-pointer bg-white'>
         
         <div className='relative h-48 overflow-hidden'>
             <img src={car.image} alt="Car Image" className='w-full h-full object-cover
-            transition-transform duration-500 group-hover:scale-105'/>
+            transition-transform duration-500 group-hover:scale-105 border-2 border-black-500'/>
             {car.isAvaliable && <p className='absolute top-4 left-4 bg-primary/90 text-white text-x5 px-2.5 py-1 rounded-full'>Avaliable Now </p>}
 
             <div className='absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm text-white px-3 py-2
