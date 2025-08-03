@@ -9,7 +9,8 @@ const checkAvailability = async(car, pickupDate, returnDate) =>{
     })
 
     // console.log(bookings);
-
+    
+    
     return bookings.length === 0 ; 
 }
 
@@ -36,14 +37,15 @@ export const checkAvailabilityOfCar = async(req,res) =>{
 }
 
 export const createBooking = async(req,res) =>{
-    // console.log(req);
+    // console.log(req);    
     try{
       const {_id } = req.user;
       const {car, pickupDate,returnDate } = req.body;
-
+        
       const isAvailable = await checkAvailability(car, pickupDate, returnDate)
+      
       if(!isAvailable){
-        return res.json({ success:false, message: "car is not available"})
+        return res.json({ success:false, message: "This car is not available for the selected dates! Please choose another car or different dates."})
       }
 
       const carData = await Car.findById(car);

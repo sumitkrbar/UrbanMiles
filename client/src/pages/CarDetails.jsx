@@ -14,6 +14,7 @@ const CarDetails = () => {
   const currency = import.meta.env.VITE_CURRENCY
 
   const handleSubmit = async(e)=>{
+    
      e.preventDefault();
      try {
       const {data} =  await axios.post('/api/bookings/create',{
@@ -21,7 +22,7 @@ const CarDetails = () => {
          pickupDate,
          returnDate
       })
-
+      
       if(data.success){
         toast.success(data.message)
         navigate('/my-bookings')

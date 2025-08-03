@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import User from '../models/user.js';
 
 export const protect = async(req,res,next)=>{
+    
     const token = req.headers.authorization;
     if(!token){
         return res.json({success: false, message:"not authorized"});
@@ -15,6 +16,7 @@ export const protect = async(req,res,next)=>{
         }
 
         req.user = await User.findById(userId).select("-password");
+        
         next();
     } catch(error){
         console.log(error);
