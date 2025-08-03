@@ -51,7 +51,7 @@ const CarDetails = () => {
             <div className='space-y-6'>
               <div>
                 <h1 className='text-3xl font-bold'>{car.brand} {car.model} </h1>
-                <p className='text-gray-500 text-lg'>c{car.category} • {car.year} </p>
+                <p className='text-white text-lg'>c{car.category} • {car.year} </p>
               </div>
               <hr className='border-borderColor my-6' />
 
@@ -70,16 +70,19 @@ const CarDetails = () => {
               </div>
 
              <div>
-               <h1 className='text-lg font-medium mb-3'>Description</h1>
-               <p className='text-gray-500'>{car.description}</p>
+               <h1 className= 'inline-block text-lg font-medium mb-3 bg-white px-2 py-1 rounded'>Description</h1>
+               <p className='text-white'>{car.description}</p>
              </div>
 
              <div>
-              <h1 className='text-lg font-medium mb-3'>Features</h1>
+              <h1 className='inline-block text-lg font-medium mb-3 bg-white px-2 py-1 rounded'>
+                Features
+              </h1>
+
               <ul className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
                 {
                   ["360 Camera", "Bluetooth", "GPS", "Heated Seats", "Rear View Mirror"].map((item)=>(
-                    <li key={item} className='flex items-center text-gray-500'>
+                    <li key={item} className='flex items-center text-white'>
                         <img src={assets.check_icon} alt="" className='h-4 mr-2'/>
                         {item}
                     </li>
@@ -92,7 +95,7 @@ const CarDetails = () => {
         </div>
 
         <form onSubmit={handleSubmit} 
-        className='shadow-lg h-max sticky top-18 roundex-xl p-6 space-y-6 text-gray-500'>
+        className='shadow-lg h-max sticky top-18 roundex-xl p-6 space-y-6 text-white bg-white/10 backdrop-blur-md'>
           <p className='flex items-center justify-between text-2xl text-gray-800 font-semibold'> {currency} {car.pricePerDay} <span className='text-base text-gray-400 font-normal '>per day</span></p>
 
           <hr  className='border-borderColor my-6'/>
@@ -110,7 +113,7 @@ const CarDetails = () => {
 
           <button className='w-full bg-primary hover:bg-primary-dull transition-all py-3 font-medium text-white rounded-xl cursor-pointer'>Book Now</button>
 
-          <p className='text-center text-sm'>No Credit card required to reserve</p>
+          {/* <p className='text-center text-sm'>No Credit card required to reserve</p> */}
 
         </form>
         
