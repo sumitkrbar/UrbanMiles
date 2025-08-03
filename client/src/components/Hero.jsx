@@ -112,6 +112,7 @@ const Hero = () => {
                   type="date"
                   id="return-date"
                   required
+                  min={pickupDate}
                   className="bg-[#111] text-[#F5F5F5] border border-[#333] px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#D4AF37] bg-white text-black"
                 />
               </div>
