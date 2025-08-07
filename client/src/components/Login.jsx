@@ -5,28 +5,51 @@ import toast from 'react-hot-toast';
 const Login = () => {
 
     const {setShowLogin, axios , setToken, navigate } = useAppContext();
-
+    const [loading, setLoading] = React.useState(false);
     const [state, setState] = React.useState("login");
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 
+    // React.useEffect(() => {
+    //     console.log("Updated loading state:", loading);
+    // }, [loading]);
     const onSubmitHandler = async(event) =>{
-        try{
-            event.preventDefault();
-            const { data } = await axios.post(`/api/user/${state}`, {name, email, password})
-
-            if(data.success){
-                navigate('/');
-                setToken(data.token);
-                localStorage.setItem('token',data.token )
-                setShowLogin(false)
-            } else{
-                toast.error(data.message)
-            }
-        }catch(error){
-            toast.error(error.message)
+        event.preventDefault();
+        if(loading) return;
+        //console.log(loading);
+        setLoading(true);
+        if(state === "login" && (!email || !password)){
+            toast.error("Please fill all fields");
+            setLoading(false);
+            return;
         }
+        if(state === "register" && (!name || !email || !password)){
+            toast.error("Please fill all fields");
+            setLoading(false);
+            return;
+        }
+        
+        setTimeout(async () => {
+            try{
+                
+                const { data } = await axios.post(`/api/user/${state}`, {name, email, password})
+                console.log(data);
+                
+                if(data.success){
+                    navigate('/');
+                    setToken(data.token);
+                    localStorage.setItem('token',data.token )
+                    setShowLogin(false)
+                } else{
+                    toast.error(data.message)
+                }
+            }catch(error){
+                toast.error(error.message)
+            }finally{
+                setLoading(false);
+            }
+        }, 2000);
        
     }
 
@@ -60,8 +83,10 @@ const Login = () => {
                     Create an account? <span onClick={() => setState("register")} className="text-primary cursor-pointer">click here</span>
                 </p>
             )}
-            <button className="bg-indigo-500 hover:bg-blue-800 transition-all text-white w-full py-2 rounded-md cursor-pointer">
-                {state === "register" ? "Create Account" : "Login"}
+            <button 
+                disabled={loading}
+                className="bg-indigo-500 hover:bg-blue-800 transition-all text-white w-full py-2 rounded-md cursor-pointer">
+                {loading ? 'Logging in...' : state === "register" ? "Create Account" : "Login"}
             </button>
         </form>
     </div>
