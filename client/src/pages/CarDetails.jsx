@@ -1,127 +1,154 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { assets, dummyCarData } from '../assets/assets'
+import { assets } from '../assets/assets'
 import Loader from '../components/Loader'
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
 
 const CarDetails = () => {
-
-  const {id} = useParams()
-  const {cars, axios, pickupDate , setPickupDate, returnDate, setReturnDate } = useAppContext()
+  const { id } = useParams()
+  const { cars, axios, pickupDate, setPickupDate, returnDate, setReturnDate } = useAppContext()
   const navigate = useNavigate()
-  const [car,setCar] = useState(null);
+  const [car, setCar] = useState(null)
   const currency = import.meta.env.VITE_CURRENCY
 
-  const handleSubmit = async(e)=>{
-    
-     e.preventDefault();
-     try {
-      const {data} =  await axios.post('/api/bookings/create',{
-         car: id, 
-         pickupDate,
-         returnDate
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const { data } = await axios.post('/api/bookings/create', {
+        car: id,
+        pickupDate,
+        returnDate
       })
-      
-      if(data.success){
+
+      if (data.success) {
         toast.success(data.message)
         navigate('/my-bookings')
-      } else{        
+      } else {
         toast.error(data.message)
       }
-      
-     } catch (error) {
-       toast.error(error.message)
-     }
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setCar(cars.find(car => car._id === id))
-  },[cars,id])
+  }, [cars, id])
 
   return car ? (
-    <div className='px-6 md:px-16 lg:px-24 xl:px-32 mt-16'>
-      <button onClick={()=> navigate(-1)} className='flex items-center gap-2 mb-6  text-gray-500 cursor-pointer'>
-        <img src={assets.arrow_icon} alt="" className='rotate-180 opacity-65'/>
+    <div className="px-6 md:px-16 lg:px-24 xl:px-32 mt-16 text-white">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 mb-6 text-gray-200 hover:text-white drop-shadow"
+      >
+        <img src={assets.arrow_icon} alt="" className="rotate-180 opacity-70" />
         Back to all cars
       </button>
 
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12'>
-        <div className='lg:col-span-2'>
-            <img src={car.image} alt="" className='w-full h-auto md:max-h-100 object-cover rounded-xl mb-6 shadow-md' />
-            <div className='space-y-6'>
-              <div>
-                <h1 className='text-3xl font-bold'>{car.brand} {car.model} </h1>
-                <p className='text-white text-lg'>c{car.category} • {car.year} </p>
-              </div>
-              <hr className='border-borderColor my-6' />
-
-              <div className='grid grid-cols-2 sm:grid-cols-4 gap-4'>
-                  {[
-                    {icon: assets.users_icon, text: `${car.seating_capacity} Seats`},
-                    {icon: assets.fuel_icon, text: car.fuel_type},
-                    {icon: assets.car_icon, text: car.transmission},
-                    {icon: assets.location_icon, text: car.location},
-                  ].map(({icon,text}) =>(
-                    <div key={text} className='flex flex-col items-center bg-light p-4 rounded-lg'>
-                      <img src={icon} alt="" className='h-5 mb-2' />
-                      {text}
-                    </div>
-                  ))}
-              </div>
-
-             <div>
-               <h1 className= 'inline-block text-lg font-medium mb-3 bg-white px-2 py-1 rounded'>Description</h1>
-               <p className='text-white'>{car.description}</p>
-             </div>
-
-             <div>
-              <h1 className='inline-block text-lg font-medium mb-3 bg-white px-2 py-1 rounded'>
-                Features
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="lg:col-span-2 bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-lg border border-white/20">
+          <img
+            src={car.image}
+            alt=""
+            className="w-full h-auto md:max-h-100 object-cover rounded-xl mb-6 shadow-md"
+          />
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-extrabold bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text drop-shadow">
+                {car.brand} {car.model}
               </h1>
-
-              <ul className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
-                {
-                  ["360 Camera", "Bluetooth", "GPS", "Heated Seats", "Rear View Mirror"].map((item)=>(
-                    <li key={item} className='flex items-center text-white'>
-                        <img src={assets.check_icon} alt="" className='h-4 mr-2'/>
-                        {item}
-                    </li>
-                  ))
-                }
-              </ul>
-             </div>
-
+              <p className="text-lg text-gray-300">{car.category} • {car.year}</p>
             </div>
+
+            <hr className="border-white/30 my-6" />
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[ 
+                { icon: assets.users_icon, text: `${car.seating_capacity} Seats` },
+                { icon: assets.fuel_icon, text: car.fuel_type },
+                { icon: assets.car_icon, text: car.transmission },
+                { icon: assets.location_icon, text: car.location }
+              ].map(({ icon, text }) => (
+                <div
+                  key={text}
+                  className="flex flex-col items-center bg-white/20 backdrop-blur-lg p-4 rounded-lg text-white shadow"
+                >
+                  <img src={icon} alt="" className="h-5 mb-2" />
+                  {text}
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <h2 className="inline-block text-lg font-semibold mb-3 px-3 py-1 rounded border border-white/30 bg-white/10 text-white">
+                Description
+              </h2>
+              <p className="text-gray-100">{car.description}</p>
+            </div>
+
+            <div>
+              <h2 className="inline-block text-lg font-semibold mb-3 px-3 py-1 rounded border border-white/30 bg-white/10 text-white">
+                Features
+              </h2>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-100">
+                {["360 Camera", "Bluetooth", "GPS", "Heated Seats", "Rear View Mirror"].map(item => (
+                  <li key={item} className="flex items-center">
+                    <img src={assets.check_icon} alt="" className="h-4 mr-2" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} 
-        className='shadow-lg h-max sticky top-18 roundex-xl p-6 space-y-6 text-white bg-white/10 backdrop-blur-md'>
-          <p className='flex items-center justify-between text-2xl text-gray-800 font-semibold'> {currency} {car.pricePerDay} <span className='text-base text-gray-400 font-normal '>per day</span></p>
+        <form
+          onSubmit={handleSubmit}
+          className="shadow-xl h-max sticky top-20 rounded-xl p-6 space-y-6 bg-white/10 backdrop-blur-lg text-white border border-white/20"
+        >
+          <p className="flex items-center justify-between text-2xl font-semibold">
+            {currency} {car.pricePerDay}
+            <span className="text-base text-gray-300 font-normal">per day</span>
+          </p>
 
-          <hr  className='border-borderColor my-6'/>
-          <div className='flex flex-col gap-2'>
-            <label htmlFor="pickup-date">Pickup Date</label>
-            <input value={pickupDate} onChange={(e)=> setPickupDate(e.target.value)} 
-            type = "date" className='border border-borderColor px-3 py-2 rounded-lg' required id='pickup-date' min = {new Date().toISOString().split('T')[0]}/>
+          <hr className="border-white/30 my-6" />
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="pickup-date" className="text-white">Pickup Date</label>
+            <input
+              value={pickupDate}
+              onChange={(e) => setPickupDate(e.target.value)}
+              type="date"
+              id="pickup-date"
+              className="border border-white/30 px-3 py-2 rounded-lg bg-white text-gray-900"
+              required
+              min={new Date().toISOString().split('T')[0]}
+            />
           </div>
 
-          <div className='flex flex-col gap-2'>
-            <label htmlFor="return-date">Return Date</label>
-            <input value={returnDate} onChange={(e)=> setReturnDate(e.target.value)}
-             type = "date" className='border border-borderColor px-3 py-2 rounded-lg '  required id='return-date' min={pickupDate} />
+          <div className="flex flex-col gap-2">
+            <label htmlFor="return-date" className="text-white">Return Date</label>
+            <input
+              value={returnDate}
+              onChange={(e) => setReturnDate(e.target.value)}
+              type="date"
+              id="return-date"
+              className="border border-white/30 px-3 py-2 rounded-lg bg-white text-gray-900"
+              required
+              min={pickupDate}
+            />
           </div>
 
-          <button className='w-full bg-primary hover:bg-primary-dull transition-all py-3 font-medium text-white rounded-xl cursor-pointer'>Book Now</button>
-
-          {/* <p className='text-center text-sm'>No Credit card required to reserve</p> */}
-
+          <button className="w-full bg-primary hover:bg-primary-dull transition-all py-3 font-medium text-white rounded-xl">
+            Book Now
+          </button>
         </form>
-        
       </div>
-      
     </div>
-  ) : <Loader/>
+  ) : (
+    <Loader />
+  )
 }
 
 export default CarDetails

@@ -14,17 +14,13 @@ import ManageCars from './pages/owner/ManageCars';
 import Login from './components/Login';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext';
-import { assets } from './assets/assets';
 
 const App = () => {
   const { showLogin } = useAppContext();
   const isOwnerPath = useLocation().pathname.startsWith('/owner');
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-no-repeat bg-fixed"
-      style={{ backgroundImage: `url(${assets.base})` }}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#101927] to-[#1c1c1c] text-white">
       <Toaster />
       {showLogin && <Login />}
       {!isOwnerPath && <Navbar />}
