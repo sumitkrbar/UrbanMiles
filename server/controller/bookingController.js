@@ -1,6 +1,8 @@
 import Booking from "../models/booking.js"
 import Car from "../models/car.js";
-
+import { BookingRequestCreated, BookingRequestAccepted, BookingRequestCancelled } from "../utils/mailObject.js";
+import transporter from "../config/mail.js";
+const TestUserEmail = process.env.TEST_USER_EMAIL;
 const checkAvailability = async(car, pickupDate, returnDate) =>{
     const bookings = await Booking.find({
         car,
@@ -48,15 +50,33 @@ export const createBooking = async(req,res) =>{
         return res.json({ success:false, message: "This car is not available for the selected dates! Please choose another car or different dates."})
       }
 
-      const carData = await Car.findById(car);
+      const carData = await Car.findById(car).populate("owner");;
       const picked = new Date(pickupDate);
       const returned = new Date(returnDate);
       const noOfDays = Math.ceil((returned - picked) /(1000 * 60 * 60 * 24));
       const price = carData.pricePerDay * noOfDays ;
 
-      await Booking.create({car, owner: carData.owner, user: _id, pickupDate, returnDate, price});
+      const newBooking = await Booking.create({
+            car,
+            user: _id,
+            owner: carData.owner._id,
+            pickupDate,
+            returnDate,
+            price,
+            status: "pending"
+        });
 
-      res.json({ success: true, message: "Booking Created" });
+        const booking = await Booking.findById(newBooking._id).populate("car").populate("user").populate("owner");
+
+        const mailOptions = {
+            ...BookingRequestCreated(booking),
+            to: [booking.user?.email, TestUserEmail]
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("Booking request email sent to owner :", booking.owner.email);
+        
+        res.json({ success: true, message: "Booking Request Created" });
 
     } catch(error){
         console.log(error.message);
@@ -96,14 +116,37 @@ export const changeBookingStatus = async(req,res) =>{
     try{
         const {_id} = req.user;
         const {bookingId , status} = req.body
-        const booking = await Booking.findById(bookingId);
+        const booking = await Booking.findById(bookingId).populate("car").populate("user").populate("owner");;
+        console.log("here: ", booking);
+        
 
-        if(booking.owner.toString() !== _id.toString()){
+        if(booking.owner._id.toString() !== _id.toString()){
             return res.json({success: false, message: "Unauthorized"})
         }
-
+        if(!booking){
+            return res.json({success: false, message: "Booking not found"})
+        }        
         booking.status = status;
         await booking.save();
+        
+        let mailOptions;
+        if(status === "confirmed"){ 
+            mailOptions = {
+                ...BookingRequestAccepted(booking),
+                to: [booking.user?.email, TestUserEmail]
+            };
+        }   
+        else if(status === "cancelled"){
+            mailOptions = {
+                ...BookingRequestCancelled(booking),
+                to: [booking.user?.email, TestUserEmail]
+            };
+        } 
+
+       
+        await transporter.sendMail(mailOptions);
+        console.log("Booking status email sent to user :", booking.user.email);
+        
 
         res.json({
             success: true, 
