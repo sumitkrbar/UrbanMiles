@@ -41,8 +41,8 @@ const ManageBookings = () => {
   return (
      <div className='px-4 pt-10 md:px-10 w-full'>
 
-      <Title title='Manage Bookings' subTitle='Track all customer bookings, approve or concel requests, and manage booking statuses.' />
-
+      <h1 className="text-3xl font-semibold text-[#D4AF37]">Manage Bookings</h1>
+      <p className="text-base text-white">Track all customer bookings, approve or concel requests, and manage booking statuses.</p>
       <div className='max-w-3xl w-full rounded-md overflow-hidden border border-borderColor mt-6'>
          <table className='w-full border-collapse text-left text-sm text-gray-600 bg-white shadow-sm'>
             <thead className = 'text-black'>
