@@ -2,19 +2,28 @@ import Booking from "../models/booking.js"
 import Car from "../models/car.js";
 import { BookingRequestCreated, BookingRequestAccepted, BookingRequestCancelled } from "../utils/mailObject.js";
 import transporter from "../config/mail.js";
-const TestUserEmail = process.env.TEST_USER_EMAIL;
-const checkAvailability = async(car, pickupDate, returnDate) =>{
-    const bookings = await Booking.find({
-        car,
-        pickupDate :{$lte: returnDate},
-        returnDate: {$gte: pickupDate},
-    })
+import { isCarAvailableForDates } from '../utils/bookingUtils.js'
 
-    // console.log(bookings);
-    
-    
-    return bookings.length === 0 ; 
-}
+const TestUserEmail = process.env.TEST_USER_EMAIL;
+
+export const checkAvailability = async (req, res) => {
+  try {
+    const { car, pickupDate, returnDate } = req.body;
+
+    const isAvailable = await isCarAvailableForDates(car, pickupDate, returnDate);
+
+    return res.status(200).json({
+      success: true,
+      isCarAvailable: isAvailable
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 
 export const checkAvailabilityOfCar = async(req,res) =>{
     try{
@@ -23,7 +32,7 @@ export const checkAvailabilityOfCar = async(req,res) =>{
         const cars = await Car.find({location,isAvailable:true})
 
         const availableCarsPromises = cars.map(async (car) =>{
-            const isAvailable = await checkAvailability(car._id, pickupDate, returnDate)
+            const isAvailable = await isCarAvailableForDates(car._id, pickupDate, returnDate)
             return {...car._doc, isAvailable: isAvailable}
         })
 
@@ -44,7 +53,7 @@ export const createBooking = async(req,res) =>{
       const {_id } = req.user;
       const {car, pickupDate,returnDate } = req.body;
         
-      const isAvailable = await checkAvailability(car, pickupDate, returnDate)
+      const isAvailable = await isCarAvailableForDates(car, pickupDate, returnDate)
       
       if(!isAvailable){
         return res.json({ success:false, message: "This car is not available for the selected dates! Please choose another car or different dates."})

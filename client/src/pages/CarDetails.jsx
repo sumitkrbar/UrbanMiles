@@ -4,33 +4,63 @@ import { assets } from '../assets/assets'
 import Loader from '../components/Loader'
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
-
+import { useConfirm } from '../components/ConfirmDialog';
 const CarDetails = () => {
   const { id } = useParams()
-  const { cars, axios, pickupDate, setPickupDate, returnDate, setReturnDate } = useAppContext()
+  const {user, cars, axios, pickupDate, setPickupDate, returnDate, setReturnDate,  setShowLogin} = useAppContext()
   const navigate = useNavigate()
   const [car, setCar] = useState(null)
   const currency = import.meta.env.VITE_CURRENCY
-
+  const confirm = useConfirm();
+  
+  
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
+  e.preventDefault()
+  try {
+    if (!pickupDate || !returnDate) {
+      toast.error("Please select both pickup and return dates")
+      return;
+    }
+
+    console.log("inside handleSubmit");
+    if(!user){
+      toast.error("Please login to book a car");
+      setShowLogin(true);
+      return;
+    }
+    const { data } = await axios.post('/api/bookings/check-if-available', {
+      car: id,
+      pickupDate,
+      returnDate
+    });
+
+    const isCarAvailable = data.isCarAvailable;
+    //console.log("isCarAvailable: ", isCarAvailable);
+
+    if (isCarAvailable) {
+      const confirmed = await confirm("Car is available. Do you want to proceed with booking?");
+      if (!confirmed) return;
+
       const { data } = await axios.post('/api/bookings/create', {
         car: id,
         pickupDate,
         returnDate
-      })
+      });
 
       if (data.success) {
-        toast.success(data.message)
-        navigate('/my-bookings')
+        toast.success(data.message);
+        navigate('/my-bookings');
       } else {
-        toast.error(data.message)
+        toast.error(data.message);
       }
-    } catch (error) {
-      toast.error(error.message)
+    } else {
+      toast.error("This car is not available for the selected dates! Please choose another car or different dates.");
+      return;
     }
+  } catch (error) {
+    toast.error(error.message);
   }
+};
 
   useEffect(() => {
     setCar(cars.find(car => car._id === id))
@@ -141,7 +171,7 @@ const CarDetails = () => {
           </div>
 
           <button className="w-full bg-primary hover:bg-primary-dull transition-all py-3 font-medium text-white rounded-xl">
-            Book Now
+            Check Availability
           </button>
         </form>
       </div>
