@@ -14,12 +14,13 @@ import ManageCars from './pages/owner/ManageCars';
 import Login from './components/Login';
 import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext';
-
+import { ConfirmProvider } from './components/ConfirmDialog';
 const App = () => {
   const { showLogin } = useAppContext();
   const isOwnerPath = useLocation().pathname.startsWith('/owner');
 
   return (
+    <ConfirmProvider> 
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#101927] to-[#1c1c1c] text-white">
       <Toaster />
       {showLogin && <Login />}
@@ -40,6 +41,7 @@ const App = () => {
 
       {!isOwnerPath && <Footer />}
     </div>
+    </ConfirmProvider>
   );
 };
 

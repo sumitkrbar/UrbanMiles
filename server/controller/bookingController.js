@@ -158,3 +158,39 @@ export const changeBookingStatus = async(req,res) =>{
         res.json({ success: false, message: error.message })
     }
 }
+
+
+export const cancelBooking = async(req,res) =>{
+    try{
+        const {_id} = req.user;
+        const {bookingId} = req.body;
+
+        const booking = await Booking.findById(bookingId).populate("car").populate("user").populate("owner");
+
+        if(booking.user._id.toString() !== _id.toString()){
+            return res.json({success: false, message: "Unauthorized"})
+        }
+        if(!booking){
+            return res.json({success: false, message: "Booking not found"})
+        }        
+        booking.status = "cancelled";
+        await booking.save();
+        
+        const mailOptions = {
+            ...BookingRequestCancelled(booking),
+            to: [booking.owner?.email, TestUserEmail]
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("Booking cancellation email sent to owner :", booking.owner.email);
+        
+        res.json({
+            success: true, 
+            message: "Booking cancelled successfully"
+        })
+
+    } catch(error){
+        console.log(error.message);
+        res.json({ success: false, message: error.message })
+    }
+};
