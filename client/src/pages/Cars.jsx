@@ -15,6 +15,7 @@ const Cars = () => {
   const returnDate = searchParams.get('returnDate')
 
   const {cars, axios} = useAppContext();
+  console.log(cars);
 
   const isSearchData = pickupLocation && pickupDate && returnDate 
   const [filteredCars, setFilteredCars] = useState([])
@@ -57,6 +58,7 @@ const Cars = () => {
   useEffect(()=>{
     cars.length > 0 && !isSearchData && applyFilter()
   },[input, cars])
+  // console.log(filteredCars);
   
   return (
     <div>

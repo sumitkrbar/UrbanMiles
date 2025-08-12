@@ -92,7 +92,7 @@ export const deleteCar = async(req,res) =>{
         }
 
        car.owner = null;
-       car.isAvaliable = false;
+       car.isAvailable = false;
        await car.save();
 
         res.json({ success: true, message: "Car Removed"});

@@ -21,7 +21,7 @@ const CarCard = ({ car }) => {
           className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 border-b border-white/20'
         />
 
-        {car.isAvaliable && (
+        {car.isAvailable && (
           <p className='absolute top-4 left-4 bg-green-500/90 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow'>
             Available Now
           </p>
